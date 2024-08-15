@@ -79,14 +79,6 @@ def _SelectBestPath(os_var_name: str, path: str) -> str:
   return path
 
 
-def _GetSourceSplashScreenDir():
-  # Relative to this file, the path is
-  # "../../../internal/cobalt/browser/splash_screen".
-  src_dir = os.path.join(
-      os.path.dirname(__file__), os.pardir, os.pardir, os.pardir)
-  return os.path.join(src_dir, _SOURCE_SPLASH_SCREEN_SUB_PATH)
-
-
 def GetWinToolsPath() -> str:
   windows_sdk_bin_dir = _SelectBestPath('WindowsSdkBinPath',
                                         _DEFAULT_SDK_BIN_DIR)
@@ -119,36 +111,6 @@ class Package(package.PackageBase):
     kwargs['publisher'] = options.publisher
     kwargs['product'] = options.product
     return kwargs
-
-  def _GetDestinationSplashScreenDir(self):
-    return os.path.join(self.source_dir, _DESTINATION__SPLASH_SCREEN_SUB_PATH)
-
-  def _CleanSplashScreenDir(self):
-    splash_screen_dir = self._GetDestinationSplashScreenDir()
-
-    if not os.path.exists(splash_screen_dir):
-      return
-
-    shutil.rmtree(splash_screen_dir)
-
-  def _CopySplashScreen(self):
-    splash_screen_dir = self._GetDestinationSplashScreenDir()
-    # Create the splash screen directory if necessary.
-    if not os.path.exists(splash_screen_dir):
-      try:
-        os.makedirs(splash_screen_dir)
-      except OSError as e:
-        raise RuntimeError(f'Failed to create {splash_screen_dir}: {e}') from e
-    # Copy the correct splash screen for the current product into content.
-    splash_screen_file = _SPLASH_SCREEN_FILE[self.product]
-    src_splash_screen_dir = _GetSourceSplashScreenDir()
-    src_splash_screen_file = os.path.join(src_splash_screen_dir,
-                                          splash_screen_file)
-    if not os.path.exists(src_splash_screen_file):
-      logging.error('Failed to find splash screen file in source : %s',
-                    src_splash_screen_file)
-      return
-    shutil.copy(src_splash_screen_file, splash_screen_dir)
 
   def _CopyAppxData(self):
     appx_data_output_dir = os.path.join(self.appx_folder_location, 'content',
@@ -184,11 +146,6 @@ class Package(package.PackageBase):
     # appx directory.
     if (self.product in ['youtubetv', 'mainappbeta']):
       self._CopyAppxData()
-
-    # Remove any previous splash screen from content.
-    self._CleanSplashScreenDir()
-    # Copy the correct splash screen into content.
-    self._CopySplashScreen()
 
     self.package = self._BuildPackage()
     if not os.path.exists(self.package):

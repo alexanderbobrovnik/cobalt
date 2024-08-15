@@ -23,10 +23,6 @@ namespace shared {
 
 namespace {
 
-const char* CobaltFallbackSplashScreenUrl() {
-  return "file:///splash_screen/youtube_splash_screen.html";
-}
-
 int CobaltLocalTypefaceCacheSizeInBytes() {
   // 24MB font cache size is recommended when using the |expanded|
   // cobalt font package.
@@ -39,7 +35,7 @@ const CobaltExtensionConfigurationApi kConfigurationApi = {
     &common::CobaltUserOnExitStrategyDefault,
     &common::CobaltRenderDirtyRegionOnlyDefault,
     &common::CobaltEglSwapIntervalDefault,
-    &CobaltFallbackSplashScreenUrl,
+    &common::CobaltFallbackSplashScreenUrlDefault,
     &common::CobaltEnableQuicDefault,
     &common::CobaltSkiaCacheSizeInBytesDefault,
     &common::CobaltOffscreenTargetCacheSizeInBytesDefault,
